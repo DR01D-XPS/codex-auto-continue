@@ -1,0 +1,61 @@
+<Window x:Class="CodexAutoContinue.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Codex AutoContinue" Style="{StaticResource {x:Type Window}}" Width="1300" Height="910" MinWidth="1000" MinHeight="690" WindowStartupLocation="CenterScreen" Closing="Window_Closing" Loaded="Window_Loaded">
+  <Grid Margin="24">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Grid Grid.Row="0" Margin="0,0,0,18"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel><TextBlock Text="Codex AutoContinue" FontSize="27" FontWeight="SemiBold"/><TextBlock Text="Продолжение задач после восстановления лимитов ChatGPT" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,0"/></StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="Скрыть в трей" Click="Hide_Click"/><Button Content="Выход" Click="Exit_Click"/></StackPanel>
+    </Grid>
+    <Grid Grid.Row="1"><Grid.ColumnDefinitions><ColumnDefinition Width="440"/><ColumnDefinition Width="18"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Border Background="{StaticResource PanelBrush}" CornerRadius="14" Padding="20">
+        <TabControl>
+          <TabItem Header="Задача"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <TextBlock Text="Папка проекта" Style="{StaticResource Label}"/><DockPanel><Button DockPanel.Dock="Right" Content="Обзор…" Click="BrowseProject_Click" Margin="8,0,0,0"/><TextBox x:Name="ProjectBox" AutomationProperties.Name="Папка проекта"/></DockPanel>
+            <WrapPanel><RadioButton x:Name="NewMode" Content="Новая задача" IsChecked="True" Checked="Mode_Changed"/><RadioButton x:Name="ExistingMode" Content="Локальная сессия" Checked="Mode_Changed"/></WrapPanel>
+            <StackPanel x:Name="NewPanel"><TextBlock Text="Исходное задание" Style="{StaticResource Label}"/><TextBox x:Name="PromptBox" AcceptsReturn="True" Height="155" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" AutomationProperties.Name="Исходное задание"/></StackPanel>
+            <StackPanel x:Name="ExistingPanel" Visibility="Collapsed">
+              <Button Content="Выбрать из списка сессий" Click="Sessions_Click" Margin="0,8,0,0"/><TextBlock Text="ID выбранной сессии" Style="{StaticResource Label}"/><TextBox x:Name="SessionIdBox" AutomationProperties.Name="ID сессии"/><TextBlock x:Name="SessionDetail" Foreground="{StaticResource MutedBrush}" Margin="0,8,0,0"/>
+              <CheckBox x:Name="HandoffBox"><TextBlock Text="Я остановил и закрыл эту задачу в исходном клиенте Codex и передаю её приложению."/></CheckBox>
+            </StackPanel>
+            <CheckBox x:Name="AutoBox" IsChecked="True" Content="Автоматически продолжать после лимита"/>
+            <WrapPanel Margin="0,8,0,0"><Button x:Name="StartButton" Content="Запустить" Style="{StaticResource PrimaryButton}" Click="Start_Click"/><Button Content="Включить автопродолжение" Click="EnableAuto_Click"/></WrapPanel>
+            <WrapPanel><Button Content="Приостановить" Click="Pause_Click"/><Button Content="Остановить" Click="Stop_Click"/><Button Content="Продолжить сейчас" Click="Continue_Click"/></WrapPanel>
+            <TextBlock Text="Сообщение продолжения" Style="{StaticResource Label}"/><TextBox x:Name="ContinueBox" AcceptsReturn="True" Height="145" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Сообщение продолжения"/>
+            <Button Content="Сохранить сообщение" Click="SaveSettings_Click" Margin="0,8,0,0"/>
+            <WrapPanel Margin="0,12,0,0"><Button Content="Открыть папку проекта" Click="OpenProject_Click"/><Button Content="Проверить историю запуска" Click="Reconcile_Click"/></WrapPanel>
+          </StackPanel></ScrollViewer></TabItem>
+          <TabItem Header="Настройки"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <TextBlock Text="Codex CLI устанавливается отдельно" FontWeight="SemiBold" Margin="0,12,0,8"/><TextBlock Text="Установите официальный CLI: npm install -g @openai/codex. Затем выполните codex login и войдите через ChatGPT. Можно выбрать codex.exe из расширения VS Code." Foreground="{StaticResource MutedBrush}"/>
+            <TextBlock Text="Путь к нативному codex.exe" Style="{StaticResource Label}"/><TextBox x:Name="CliPathBox"/><WrapPanel Margin="0,8,0,0"><Button Content="Выбрать EXE" Click="BrowseCli_Click"/><Button Content="Подключить CLI" Click="Connect_Click"/><Button Content="Войти через ChatGPT" Click="Login_Click"/></WrapPanel>
+            <TextBlock Text="Интервал проверки, секунд (30–900)" Style="{StaticResource Label}"/><TextBox x:Name="PollBox" Text="60" Width="110" HorizontalAlignment="Left"/>
+            <CheckBox x:Name="StartupBox" Content="Запускать вместе с Windows"/><CheckBox x:Name="RestoreBox" Content="Восстанавливать ожидание после запуска приложения"/><CheckBox x:Name="NotificationsBox" Content="Показывать уведомления"/><CheckBox x:Name="TrayCloseBox" Content="При закрытии окна скрывать в трей"/>
+            <Button Content="Сохранить настройки" Style="{StaticResource PrimaryButton}" Click="SaveSettings_Click" Margin="0,16,0,8"/><TextBlock x:Name="DataFolderText" Foreground="{StaticResource MutedBrush}"/><WrapPanel Margin="0,16,0,0"><Button Content="Открыть журнал" Click="OpenLog_Click"/><Button Content="Очистить журнал" Click="ClearLog_Click"/></WrapPanel>
+          </StackPanel></ScrollViewer></TabItem>
+          <TabItem Header="Справка"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <TextBlock Text="Как пользоваться" FontSize="20" FontWeight="SemiBold" Margin="0,12,0,14"/>
+            <TextBlock Text="1. Подключите Codex CLI с входом через ChatGPT.&#x0a;&#x0a;2. Выберите папку и задайте новую задачу либо выберите точный ID локальной сессии. Перед передачей существующей сессии остановите и закройте задачу в исходном клиенте. Если сессия всё ещё занята, сохраните работу и полностью закройте тот клиент, например VS Code.&#x0a;&#x0a;3. Включите автопродолжение и нажмите «Запустить». После ошибки исчерпания лимита приложение читает лимиты без запросов модели.&#x0a;&#x0a;4. После восстановления обычного использования продолжится та же сессия. Нормальное завершение прекращает автоматические сообщения.&#x0a;&#x0a;5. Запросы разрешений показаны справа. Они требуют вашего ответа. Полный выход прерывает принадлежащий приложению Codex и завершает дочерние процессы." Foreground="{StaticResource MutedBrush}"/>
+            <TextBlock Text="Ограничения" FontWeight="SemiBold" Margin="0,22,0,8"/><TextBlock Text="Первая версия поддерживает нативные Windows-сессии в том же CODEX_HOME. WSL, SSH и удалённые среды не поддерживаются. Статус отдельного App Server не доказывает, что VS Code остановлен. Приложение не управляет панелью расширения.&#x0a;&#x0a;Если подтверждение запуска потеряно, повтор блокируется до проверки истории.&#x0a;&#x0a;Пробуждение Windows запускает повторную проверку. Для работы компьютер должен оставаться включённым и иметь интернет.&#x0a;&#x0a;Ограничения и разрешения берутся из конфигурации Codex. Приложение не меняет config.toml." Foreground="{StaticResource MutedBrush}"/>
+            <Button Content="Официальная документация" Click="Docs_Click" Margin="0,20,0,0"/>
+          </StackPanel></ScrollViewer></TabItem>
+        </TabControl>
+      </Border>
+      <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*" MinHeight="240"/></Grid.RowDefinitions>
+        <Border Background="{StaticResource PanelBrush}" CornerRadius="14" Padding="20" Margin="0,0,0,14"><StackPanel>
+          <DockPanel><TextBlock x:Name="StateText" Text="Готово" FontSize="23" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"/><TextBlock x:Name="AutoStatusText" DockPanel.Dock="Right" HorizontalAlignment="Right" Foreground="{StaticResource MutedBrush}"/></DockPanel>
+          <TextBlock x:Name="DetailText" Margin="0,8,0,12" Foreground="{StaticResource MutedBrush}"/>
+          <TextBlock x:Name="CurrentTaskText" FontWeight="SemiBold" MaxHeight="42"/><TextBox x:Name="CurrentIdText" IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0,5" Text="ID: —"/>
+          <WrapPanel><TextBlock x:Name="CliStatusText" Text="CLI: проверка…" Margin="0,0,18,0" Foreground="{StaticResource MutedBrush}"/><TextBlock x:Name="AuthText" Text="Авторизация: проверка…" Foreground="{StaticResource MutedBrush}"/></WrapPanel>
+        </StackPanel></Border>
+        <Border Grid.Row="1" Background="{StaticResource PanelBrush}" CornerRadius="14" Padding="20" Margin="0,0,0,14"><StackPanel>
+          <DockPanel><Button DockPanel.Dock="Right" Content="Проверить лимиты" Click="CheckLimits_Click" Margin="0,0,0,8"/><TextBlock Text="Доступные лимиты" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/></DockPanel>
+          <ItemsControl x:Name="LimitsItems"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,6,0,8"><DockPanel><TextBlock Text="{Binding Label}"/><TextBlock DockPanel.Dock="Right" Text="{Binding RemainingPercent, StringFormat=Осталось {0:0}%}" HorizontalAlignment="Right" Foreground="{StaticResource AccentBrush}"/></DockPanel><ProgressBar Value="{Binding RemainingPercent, Mode=OneWay}" Maximum="100" Margin="0,7,0,7"/><TextBlock Text="{Binding ResetLabel, StringFormat=Сброс: {0}}" Foreground="{StaticResource MutedBrush}" FontSize="12"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          <TextBlock x:Name="LimitInfoText" Text="Лимиты ещё не получены" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,4"/><TextBlock x:Name="ResetText" Text="Время восстановления: —"/><TextBlock x:Name="CountdownText" Text="Обратный отсчёт: —" Foreground="{StaticResource AccentBrush}" FontSize="18" Margin="0,4,0,0"/><TextBlock x:Name="NextCheckText" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,5,0,0"/>
+        </StackPanel></Border>
+        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" CornerRadius="14" Padding="16"><Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <TabControl x:Name="OutputTabs"><TabItem Header="Вывод Codex"><TextBox x:Name="OutputBox" IsReadOnly="True" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" FontFamily="Consolas" FontSize="13" VerticalContentAlignment="Top" MinHeight="125" MaxHeight="400"/></TabItem><TabItem Header="Журнал событий"><TextBox x:Name="JournalBox" IsReadOnly="True" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="12" VerticalContentAlignment="Top" MinHeight="125" MaxHeight="400"/></TabItem><TabItem Header="Разрешения / вопросы"><StackPanel><TextBlock x:Name="ApprovalSummary" Text="Нет запросов разрешений." Margin="0,12,0,12"/><Button x:Name="ApprovalButton" Content="Рассмотреть запрос" Click="Approval_Click" IsEnabled="False"/></StackPanel></TabItem></TabControl>
+          <DockPanel Grid.Row="1" Margin="0,12,0,0"><Button DockPanel.Dock="Right" Content="Отправить ответ" Click="Reply_Click" Margin="8,0,0,0"/><TextBox x:Name="ReplyBox" MinHeight="40" MaxHeight="100" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Ответ или уточнение" ToolTip="Ответ или уточнение для выбранной сессии"/></DockPanel>
+        </Grid></Border>
+      </Grid></ScrollViewer>
+    </Grid>
+    <TextBlock Grid.Row="2" Text="Локальный App Server · обычные лимиты ChatGPT · Codex CLI устанавливается отдельно" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,14,0,0"/>
+  </Grid>
+</Window>

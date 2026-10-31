@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>CodexAutoContinue</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Version>1.0.1</Version>
+    <Company>Codex AutoContinue</Company>
+    <Description>Автоматическое продолжение локальных задач Codex после восстановления лимитов ChatGPT.</Description>
+  </PropertyGroup>
+  <ItemGroup><ProjectReference Include="..\CodexAutoContinue.Core\CodexAutoContinue.Core.csproj" /></ItemGroup>
+  <ItemGroup><Resource Include="Assets\app.ico" /></ItemGroup>
+</Project>
